@@ -1,0 +1,25 @@
+[project]
+name = "openenv-content-moderation"
+version = "0.1.0"
+description = "OpenENV Content Moderation Environment"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "openai",
+    "numpy",
+    "openenv-core>=0.2.0"
+]
+
+[project.scripts]
+server = "server.app:main"
+
+[tool.openenv]
+entrypoint = "server.app:main"
+
+# 🔥 FIX for setuptools error
+[tool.setuptools.packages.find]
+include = ["api", "env", "data", "models", "server", "agent", "baseline"]
+exclude = ["frontend", "tests"]

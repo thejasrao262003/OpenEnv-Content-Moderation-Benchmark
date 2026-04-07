@@ -1,0 +1,10 @@
+fastapi
+python-dotenv
+uvicorn[standard]
+pydantic
+openai
+google-genai
+pytest
+httpx
+openenv-core
+websockets

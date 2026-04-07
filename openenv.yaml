@@ -1,0 +1,107 @@
+name: content-moderation-env
+version: 1.0.0
+description: >
+  A multi-step reinforcement learning environment for AI content moderation agents.
+  Agents receive partial observations (post content, metadata) and must investigate
+  context, classify violations, and make final moderation decisions across 24
+  deterministic scenarios spanning 4 real-world jurisdictions.
+
+author: OpenENV Hackathon Submission
+tags:
+  - content-moderation
+  - multi-step
+  - nlp
+  - policy
+  - real-world
+
+tasks:
+  - id: easy_harassment
+    difficulty: easy
+    description: >
+      Clear harassment case: explicit threats, targeted language, doxxing.
+      The agent needs minimal investigation to confirm the violation
+      and issue the correct removal decision.
+    max_steps: 6
+    default_seed: 42
+
+  - id: medium_ambiguous
+    difficulty: medium
+    description: >
+      Ambiguous commercial speech: aggressive reviews, unverified financial
+      allegations, whistleblower claims. The agent must read thread context,
+      check the applicable policy clause, and determine whether to allow,
+      flag, or escalate.
+    max_steps: 8
+    default_seed: 100
+
+  - id: hard_misinformation
+    difficulty: hard
+    description: >
+      Subtle health and environmental misinformation: viral anti-vaccine posts,
+      conspiracy theories with partial factual basis, dangerous medical advice.
+      Severity depends on engagement scale, geo jurisdiction, and full context.
+      Frontier models frequently over-remove or under-remove.
+    max_steps: 10
+    default_seed: 777
+
+observation_space:
+  type: object
+  fields:
+    post_id: string
+    content: string
+    user_id: string
+    reports: integer
+    engagement:
+      likes: integer
+      shares: integer
+      comments: integer
+    geo: "enum: US | EU | IN | UK"
+    step: integer
+    max_steps: integer
+    done: boolean
+    user_history: "list[string] | null  # revealed after fetch_user_history"
+    thread_context: "list[string] | null  # revealed after fetch_thread_context"
+    policy_clause: "string | null  # revealed after check_policy_clause"
+    violation_type: "enum: harassment | misinformation | restricted | safe | null"
+
+action_space:
+  investigation:
+    - fetch_user_history
+    - fetch_thread_context
+    - check_policy_clause
+  classification:
+    - mark_violation_type
+  terminal:
+    - allow
+    - flag
+    - remove
+    - escalate
+
+reward_structure:
+  investigation_action: +0.20
+  correct_classification: +0.50
+  wrong_classification: -0.30
+  correct_terminal_action: +1.00
+  wrong_terminal_action: -0.50
+  false_negative_penalty: -2.00
+  extra_step_penalty: -0.05 per step over minimum
+
+grader_weights:
+  final_action: 0.50
+  classification: 0.20
+  investigation: 0.15
+  efficiency: 0.15
+
+endpoints:
+  reset: POST /reset
+  step: POST /step
+  state: GET /state
+  tasks: GET /tasks
+  grader: GET /grader
+  health: GET /health
+  baseline: GET /baseline
+
+baseline_scores:
+  easy_harassment: 0.93
+  medium_ambiguous: 1.00
+  hard_misinformation: 0.50
