@@ -63,7 +63,9 @@ class Grader:
         ):
             penalty = 0.5
 
-        total = max(0.0, min(1.0, fa + cls + inv + eff - penalty))
+        # Clamp strictly within (0, 1) — validator rejects 0.0 and 1.0
+        _EPS = 1e-3
+        total = max(_EPS, min(1.0 - _EPS, fa + cls + inv + eff - penalty))
 
         return EpisodeScore(
             final_action_score=round(fa_raw, 4),
