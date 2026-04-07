@@ -421,3 +421,13 @@ if os.getenv("ENABLE_WEB_INTERFACE", "").lower() in ("true", "1", "yes"):
         logger.info("Web interface mounted at /web")
     except ImportError:
         logger.warning("gradio not installed — ENABLE_WEB_INTERFACE=true has no effect")
+
+
+def main() -> None:
+    import uvicorn
+    uvicorn.run(
+        "server.app:app",
+        host=os.getenv("HOST", "0.0.0.0"),
+        port=int(os.getenv("PORT", "8000")),
+        reload=False,
+    )
