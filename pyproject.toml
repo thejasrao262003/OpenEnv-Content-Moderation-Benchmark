@@ -27,9 +27,6 @@ package = true
 entrypoint = "server.app:main"
 
 # 🔥 FIX for setuptools error
-[tool.setuptools]
-py-modules = ["models"]
-
 [tool.setuptools.packages.find]
-include = ["server", "agent", "baseline"]
+include = ["models", "server", "agent", "baseline"]
 exclude = ["frontend", "tests"]
