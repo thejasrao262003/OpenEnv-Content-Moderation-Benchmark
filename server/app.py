@@ -278,8 +278,6 @@ def agent_run(request: ResetRequest) -> BaselineResult:
     Requires OPENAI_API_KEY, or GOOGLE_API_KEY/GEMINI_API_KEY depending on LLM_PROVIDER.
     """
     import os
-    from agent.openai_agent import OpenAIAgent
-    from agent.gemini_agent import GeminiAgent
 
     provider = os.getenv("LLM_PROVIDER", "openai").lower()
 
@@ -295,8 +293,10 @@ def agent_run(request: ResetRequest) -> BaselineResult:
 
     try:
         if provider == "gemini":
+            from agent.gemini_agent import GeminiAgent
             agent = GeminiAgent(state_manager=_state_manager, grader=_grader)
         else:
+            from agent.openai_agent import OpenAIAgent
             agent = OpenAIAgent(state_manager=_state_manager, grader=_grader)
     except EnvironmentError as exc:
         raise HTTPException(status_code=500, detail=str(exc))

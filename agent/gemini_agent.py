@@ -23,9 +23,9 @@ from google import genai
 from google.genai import types
 
 from agent.prompts import SYSTEM_PROMPT, build_turn_prompt
-from env.grader import Grader
-from env.state_manager import StateManager
-from models.schemas import (
+from server.grader import Grader
+from server.state_manager import StateManager
+from models import (
     Action,
     ActionType,
     BaselineResult,
