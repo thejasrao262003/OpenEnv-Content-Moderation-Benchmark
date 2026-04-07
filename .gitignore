@@ -47,3 +47,4 @@ frontend/.parcel-cache/
 
 # Logs
 *.log
+frontend/.env
