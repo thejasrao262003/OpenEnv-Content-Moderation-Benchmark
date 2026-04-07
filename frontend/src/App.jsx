@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import ScenarioExplorer from './pages/ScenarioExplorer'
 import AnalysisView from './pages/AnalysisView'
 import { runAgent, getState, getHealth } from './api'
+import { getApiBaseUrlLabel, toApiErrorMessage } from './apiClient'
 
 export default function App() {
   const [screen,           setScreen]          = useState('explorer')   // 'explorer' | 'analysis'
@@ -28,9 +29,7 @@ export default function App() {
       setObservation(obs)
       setAnimKey(k => k + 1)
     } catch (err) {
-      setError(
-        err?.response?.data?.detail || err.message || 'Failed to connect to API'
-      )
+      setError(toApiErrorMessage(err))
     } finally {
       setLoading(false)
     }
@@ -87,7 +86,7 @@ export default function App() {
           )}
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] inline-block" />
-            <span>API · localhost:8000</span>
+            <span>API · {getApiBaseUrlLabel()}</span>
           </div>
         </div>
       </header>
