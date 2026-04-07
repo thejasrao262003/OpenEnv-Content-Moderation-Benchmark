@@ -29,21 +29,12 @@ from openai import OpenAI
 # ---------------------------------------------------------------------------
 # Environment variables — match the exact names required by the OpenEnv spec
 # ---------------------------------------------------------------------------
-API_BASE_URL = os.getenv("API_BASE_URL")
-API_KEY      = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
-MODEL_NAME = os.getenv("MODEL_NAME")
+API_BASE_URL     = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+MODEL_NAME       = os.getenv("MODEL_NAME", "meta-llama/Llama-3.3-70B-Instruct")
+HF_TOKEN         = os.getenv("HF_TOKEN")
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")  # optional: used with from_docker_image()
 
-_missing = [
-    k for k, v in [
-        ("HF_TOKEN", API_KEY),
-        ("MODEL_NAME", MODEL_NAME),
-        ("API_BASE_URL", API_BASE_URL),
-    ] if not v
-]
-
-if _missing:
-    print(f"WARNING: env var(s) not set, using defaults: {', '.join(_missing)}", file=sys.stderr)
-if not API_KEY:
+if not HF_TOKEN:
     print("ERROR: HF_TOKEN environment variable is required.")
     sys.exit(1)
 
@@ -66,7 +57,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # OpenAI client (pointed at HuggingFace router or any OpenAI-compatible base)
 # ---------------------------------------------------------------------------
-client = OpenAI(api_key=API_KEY, base_url=API_BASE_URL)
+client = OpenAI(api_key=HF_TOKEN, base_url=API_BASE_URL)
 
 
 # ---------------------------------------------------------------------------
